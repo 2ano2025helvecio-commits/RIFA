@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorteador</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f5f5f5;
+    padding:15px;
+}
+
+.container{
+    max-width:500px;
+    margin:auto;
+}
+
+.card{
+    background:#fff;
+    border-radius:15px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+}
+
+h2{
+    text-align:center;
+    margin-bottom:15px;
+    color:#333;
+}
+
+textarea,
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    margin-bottom:10px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:10px;
+    background:#2196f3;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:active{
+    transform:scale(.98);
+}
+
+.resultado{
+    margin-top:15px;
+    background:#f0f7ff;
+    padding:12px;
+    border-radius:10px;
+    white-space:pre-line;
+}
+
+.vencedor{
+    font-size:24px;
+    text-align:center;
+    font-weight:bold;
+    color:#2e7d32;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- AMIGO OCULTO -->
+    <div class="card">
+        <h2>🎁 Amigo Oculto</h2>
+
+        <textarea id="participantes"
+        rows="6"
+        placeholder="Digite um nome por linha&#10;Ana&#10;João&#10;Maria"></textarea>
+
+        <button onclick="sortearAmigoOculto()">
+            Sortear Amigo Oculto
+        </button>
+
+        <div id="resultadoAmigo" class="resultado"></div>
+    </div>
+
+    <!-- RIFA -->
+    <div class="card">
+        <h2>🎟️ Sorteio de Rifa</h2>
+
+        <input type="number" id="inicio" placeholder="Número inicial" value="1">
+
+        <input type="number" id="fim" placeholder="Número final" value="100">
+
+        <button onclick="sortearRifa()">
+            Sortear Número
+        </button>
+
+        <div id="resultadoRifa" class="resultado vencedor"></div>
+    </div>
+
+</div>
+
+<script>
+
+function embaralhar(array){
+    for(let i = array.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+}
+
+function sortearAmigoOculto(){
+
+    const nomes = document
+        .getElementById("participantes")
+        .value
+        .split("\n")
+        .map(n => n.trim())
+        .filter(n => n !== "");
+
+    if(nomes.length < 2){
+        alert("Digite pelo menos 2 participantes.");
+        return;
+    }
+
+    let sorteio;
+
+    do{
+        sorteio = [...nomes];
+        embaralhar(sorteio);
+    }
+    while(
+        nomes.some((nome, i) => nome === sorteio[i])
+    );
+
+    let resultado = "";
+
+    nomes.forEach((nome, i)=>{
+        resultado += `${nome} ➜ ${sorteio[i]}\n`;
+    });
+
+    document.getElementById("resultadoAmigo")
+        .textContent = resultado;
+}
+
+function sortearRifa(){
+
+    const inicio = parseInt(
+        document.getElementById("inicio").value
+    );
+
+    const fim = parseInt(
+        document.getElementById("fim").value
+    );
+
+    if(inicio >= fim){
+        alert("Número inicial deve ser menor que o final.");
+        return;
+    }
+
+    const vencedor =
+        Math.floor(Math.random() * (fim - inicio + 1))
+        + inicio;
+
+    document.getElementById("resultadoRifa")
+        .innerHTML = `🏆 ${vencedor}`;
+}
+
+</script>
+
+</body>
+</html>
